@@ -47,8 +47,8 @@ To download and use this script, you have two options:
 After downloading the script, make it executable and run it:
 
 ```bash
-chmod +x splukforwarder-autostart-setup.sh
-sudo ./splukforwarder-autostart-setup.sh
+chmod +x splunkforwarder-autostart-setup.sh
+sudo ./splunkforwarder-autostart-setup.sh
 ```
 
 ## Usage
