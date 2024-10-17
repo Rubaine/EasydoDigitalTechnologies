@@ -94,4 +94,4 @@ main() {
     log_info "Done!"
 }
 
-main "$@"
+main

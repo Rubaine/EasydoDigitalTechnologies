@@ -7,17 +7,31 @@ ORANGE='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-SPLUNK_HOME="/opt/splunk"
+# Change these variables according to your environment
+SPLUNK_HOME="${SPLUNK_HOME:-/opt/splunk}"
 SPLUNK_APPS="${SPLUNK_HOME}/etc/shcluster/apps"
-SPLUNK_BACKUP_FOLDER="/home/splunkkit/backup"
+SPLUNK_BACKUP_FOLDER="/home/backup"
 SPLUNK_BIN="${SPLUNK_HOME}/bin/splunk"
-SPLUNK_HOST="https://sh1.easydo.co:8089"
+SPLUNK_HOST="https://xxx.xx:8089"
 SPLUNK_USER="spladmin"
+
+# Do not change these variables
 SPLUNK_PASS=""
 USER_CHOICE=""
 
 # Enable strict error handling
 set -e
+
+# Dry run and debug modes
+DRY_RUN=false
+DEBUG=false
+for arg in "$@"; do
+  if [[ "$arg" == "--dry-run" ]]; then
+    DRY_RUN=true
+  elif [[ "$arg" == "--debug" ]]; then
+    DEBUG=true
+  fi
+done
 
 # Functions
 log_error() {
@@ -29,7 +43,18 @@ log_info() {
 }
 
 log_debug() {
-    echo -e "${ORANGE}[DEBUG] $1${NC}"
+    if $DEBUG; then
+        echo -e "${ORANGE}[DEBUG] $1${NC}"
+    fi
+}
+
+# Command execution wrapper for dry run
+run_command() {
+    if $DRY_RUN; then
+        log_info "Dry run: $*"
+    else
+        eval "$@"
+    fi
 }
 
 check_root() {
@@ -40,7 +65,7 @@ check_root() {
 }
 
 get_user_choice() {
-    log_debug "Please choose an option:"
+    log_info "Please choose an option:"
     echo "1. Install App"
     echo "2. Update App"
     read -p "Enter choice [1-2]: " USER_CHOICE
@@ -70,26 +95,17 @@ install_app() {
     local app_file=$1
     log_info "Installing app..."
     sleep 1
-    log_info "Moving app to $SPLUNK_APPS"
-    sleep 1
-    mv $app_file $SPLUNK_APPS
-    if [ $? -ne 0 ]; then
-        log_error "Failed to move app file"
-        exit 1
-    fi
-    log_info "Extracting app..."
-    sleep 1
-    tar -xzf "$SPLUNK_APPS/$(basename $app_file)" -C $SPLUNK_APPS
-    if [ $? -ne 0 ]; then
-        log_error "Failed to extract app file"
-        exit 1
-    fi
-    log_info "Deleting .tgz app file..."
-    sleep 1
-    rm "$SPLUNK_APPS/$(basename $app_file)"
+    log_debug "Moving app to $SPLUNK_APPS"
+    run_command mv "$app_file" "$SPLUNK_APPS"
+    log_debug "Extracting app..."
+    run_command tar -xzf "$SPLUNK_APPS/$(basename $app_file)" -C "$SPLUNK_APPS"
+    log_debug "Deleting .tgz app file..."
+    run_command rm "$SPLUNK_APPS/$(basename $app_file)"
+    log_debug "Setting appropriate permissions for the app files..."
+    run_command chown -R splunk:splunk "$SPLUNK_APPS/$(basename $app_file .tgz)"
+    run_command chmod -R 755 "$SPLUNK_APPS/$(basename $app_file .tgz)"
     log_info "Applying modifications..."
-    sleep 1
-    $SPLUNK_BIN apply shcluster-bundle --answer-yes -target $SPLUNK_HOST -auth $SPLUNK_AUTH
+    run_command $SPLUNK_BIN apply shcluster-bundle --answer-yes -target "$SPLUNK_HOST" -auth "$SPLUNK_AUTH"
 }
 
 update_app() {
@@ -101,23 +117,16 @@ update_app() {
     backup_path="${SPLUNK_BACKUP_FOLDER}/$(basename $current_app_folder)_$(date +%d-%m-%Y)"
     if [ -d "$backup_path" ]; then
         log_info "Backup folder already exists. Removing the old backup..."
-        rm -rf "$backup_path"
-        if [ $? -ne 0 ]; then
-            log_error "Failed to remove old backup folder"
-            exit 1
-        fi
+        run_command rm -rf "$backup_path"
     fi
-    mv "$current_app_folder" "$backup_path"
-    if [ $? -ne 0 ]; then
-        log_error "Failed to move current app folder"
-        exit 1
-    fi
+    log_debug "Moving current app folder to backup location..."
+    run_command mv "$current_app_folder" "$backup_path"
 
     install_app "$app_file"
 }
 
 main() {
-    echo "Created by: Rubaine"
+    echo "Created by: Ruben Vieira"
     echo
 
     sleep 2
@@ -143,14 +152,14 @@ main() {
 
     case $USER_CHOICE in
         1)
-            log_debug "Installing new app"
+            log_info "Installing new app"
             sleep 1
             read -p "Enter path to .tgz app file: " app_file
             validate_file "$app_file"
             install_app "$app_file"
             ;;
         2)
-            log_debug "Updating existing app"
+            log_info "Updating existing app"
             sleep 1
             read -p "Enter path to the current app folder: " current_app_folder
             validate_directory "$current_app_folder"
@@ -168,4 +177,4 @@ main() {
     log_info "Done!"
 }
 
-main
+main "$@"
