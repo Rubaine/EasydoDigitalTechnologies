@@ -47,8 +47,8 @@ To download and use this script, you have two options:
 After downloading the script, make it executable and run it:
 
 ```bash
-chmod +x enable_splunk_boot_start.sh
-sudo ./enable_splunk_boot_start.sh
+chmod +x spluk-autostart-setup.sh
+sudo ./spluk-autostart-setup.sh
 ```
 
 ## Usage

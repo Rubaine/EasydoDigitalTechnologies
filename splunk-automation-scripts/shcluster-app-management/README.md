@@ -47,8 +47,8 @@ To download and use this script, you have two options:
 After downloading the script, make it executable and run it:
 
 ```bash
-chmod +x splunk_app_management.sh
-sudo ./splunk_app_management.sh
+chmod +x shcluster-app-management.sh
+sudo ./shcluster-app-management.sh
 ```
 
 ## Usage
