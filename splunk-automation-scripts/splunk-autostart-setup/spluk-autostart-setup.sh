@@ -5,7 +5,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 # Change the path to the Splunk binary depending on your installation
-# SPLUNK_BIN="/opt/splunk/bin/splunk"
+SPLUNK_BIN="/opt/splunk/bin/splunk"
 SERVICE_NAME="Splunkd"
 
 # Functions
