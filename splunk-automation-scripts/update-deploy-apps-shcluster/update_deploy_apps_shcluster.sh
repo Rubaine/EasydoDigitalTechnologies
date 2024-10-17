@@ -117,7 +117,7 @@ update_app() {
 }
 
 main() {
-    echo "Created by: Ruben Vieira"
+    echo "Created by: Rubaine"
     echo
 
     sleep 2
