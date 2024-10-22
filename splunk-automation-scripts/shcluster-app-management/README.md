@@ -56,25 +56,25 @@ sudo ./shcluster-app-management.sh
 To run the script:
 
 ```bash
-sudo ./splunk_app_management.sh
+sudo ./shcluster-app-management.sh
 ```
 
 You can also use the `--dry-run` option to test the script without executing any commands:
 
 ```bash
-sudo ./splunk_app_management.sh --dry-run
+sudo ./shcluster-app-management.sh --dry-run
 ```
 
 If you want detailed output for debugging purposes, use the `--debug` option:
 
 ```bash
-sudo ./splunk_app_management.sh --debug
+sudo ./shcluster-app-management.sh --debug
 ```
 
 Both `--dry-run` and `--debug` options can be used together:
 
 ```bash
-sudo ./splunk_app_management.sh --dry-run --debug
+sudo ./shcluster-app-management.sh --dry-run --debug
 ```
 
 ## Customizable Variables

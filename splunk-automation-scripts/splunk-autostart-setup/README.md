@@ -56,7 +56,7 @@ sudo ./splunk-autostart-setup.sh
 To run the script:
 
 ```bash
-sudo ./splunk_autostart_script.sh
+sudo ./splunk-autostart-setup.sh
 ```
 
 ## Customizable Variables

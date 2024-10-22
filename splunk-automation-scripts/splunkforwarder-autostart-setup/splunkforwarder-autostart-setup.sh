@@ -40,6 +40,7 @@ main() {
 
     # Stop the Universal Forwarder
     log_info "Stopping Splunk Universal Forwarder..."
+    sleep 2
     if ! $SPLUNK_BIN stop; then
         log_error "Failed to stop Splunk Universal Forwarder."
         exit 1
@@ -47,6 +48,7 @@ main() {
 
     # Disable boot start
     log_info "Disabling boot start..."
+    sleep 2
     if ! $SPLUNK_BIN disable boot-start; then
         log_error "Failed to disable boot start for Splunk Universal Forwarder."
         exit 1
@@ -54,6 +56,7 @@ main() {
 
     # Enabling boot start
     log_info "Enabling boot start..."
+    sleep 2
     if ! $SPLUNK_BIN enable boot-start -user root -systemd-managed 1; then
         log_error "Failed to enable boot start for Splunk Universal Forwarder."
         exit 1
@@ -68,6 +71,7 @@ main() {
 
     # Reload daemon
     log_info "Reloading daemon..."
+    sleep 2
     if ! systemctl daemon-reload; then
         log_error "Failed to reload daemon."
         exit 1
@@ -75,6 +79,7 @@ main() {
 
     # Enable service
     log_info "Enabling service..."
+    sleep 2
     if ! systemctl enable $SERVICE_NAME; then
         log_error "Failed to enable SplunkForwarder service."
         exit 1
@@ -82,6 +87,7 @@ main() {
 
     # Restart service
     log_info "Restarting service..."
+    sleep 2
     if ! systemctl restart $SERVICE_NAME; then
         log_error "Failed to restart SplunkForwarder service."
         exit 1
@@ -89,6 +95,7 @@ main() {
 
     # Check if running
     log_info "Checking service status..."
+    sleep 2
     systemctl status $SERVICE_NAME
 
     log_info "Done!"

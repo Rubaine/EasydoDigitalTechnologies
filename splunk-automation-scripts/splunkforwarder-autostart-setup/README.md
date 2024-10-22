@@ -56,7 +56,7 @@ sudo ./splunkforwarder-autostart-setup.sh
 To run the script:
 
 ```bash
-sudo ./splunk_forwarder_autostart.sh
+sudo ./splunkforwarder-autostart-setup.sh
 ```
 
 ## Customizable Variables
