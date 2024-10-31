@@ -103,7 +103,6 @@ install_app() {
     run_command rm "$SPLUNK_APPS/$(basename $app_file)"
     log_debug "Setting appropriate permissions for the app files..."
     run_command chown -R splunk:splunk "$SPLUNK_APPS/$(basename $app_file .tgz)"
-    run_command chmod -R 755 "$SPLUNK_APPS/$(basename $app_file .tgz)"
     log_info "Applying modifications..."
     run_command $SPLUNK_BIN apply shcluster-bundle --answer-yes -target "$SPLUNK_HOST" -auth "$SPLUNK_AUTH"
 }
