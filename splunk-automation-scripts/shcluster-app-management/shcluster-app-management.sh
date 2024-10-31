@@ -53,7 +53,7 @@ run_command() {
     if $DRY_RUN; then
         log_info "Dry run: $*"
     else
-        eval "$@"
+        "$@"
     fi
 }
 
