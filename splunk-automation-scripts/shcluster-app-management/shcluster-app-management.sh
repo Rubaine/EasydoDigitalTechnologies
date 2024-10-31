@@ -93,18 +93,43 @@ validate_directory() {
 
 install_app() {
     local app_file=$1
+    local temp_dir="/tmp/splunk_app_install_$(date +%s)"
+    local extracted_dir=""
+
     log_info "Installing app..."
     sleep 1
-    log_debug "Moving app to $SPLUNK_APPS"
-    run_command mv "$app_file" "$SPLUNK_APPS"
-    log_debug "Extracting app..."
-    run_command tar -xzf "$SPLUNK_APPS/$(basename $app_file)" -C "$SPLUNK_APPS"
+    log_debug "Creating temporary directory at $temp_dir"
+    mkdir -p "$temp_dir"
+
+    log_debug "Extracting app to temporary directory..."
+    run_command tar -xzf "$app_file" -C "$temp_dir"
+
+    extracted_dir=$(find "$temp_dir" -mindepth 1 -maxdepth 1 -type d)
+    if [ -z "$extracted_dir" ]; then
+        log_error "Failed to detect extracted directory"
+        run_command rm -rf "$temp_dir"
+        exit 1
+    fi
+
+    log_debug "Extracted directory: $extracted_dir"
+    log_debug "Moving extracted app to $SPLUNK_APPS"
+    run_command mv "$extracted_dir" "$SPLUNK_APPS"
+
     log_debug "Deleting .tgz app file..."
-    run_command rm "$SPLUNK_APPS/$(basename $app_file)"
+    run_command rm "$app_file"
+
+    local moved_dir="$SPLUNK_APPS/$(basename "$extracted_dir")"
+
     log_debug "Setting appropriate permissions for the app files..."
-    run_command chown -R splunk:splunk "$SPLUNK_APPS/$(basename $app_file .tgz)"
+    run_command chown -R splunk:splunk "$moved_dir"
+    run_command chmod -R 755 "$moved_dir"
+
     log_info "Applying modifications..."
     run_command $SPLUNK_BIN apply shcluster-bundle --answer-yes -target "$SPLUNK_HOST" -auth "$SPLUNK_AUTH"
+
+    # Clean up temporary directory
+    log_debug "Cleaning up temporary directory"
+    run_command rm -rf "$temp_dir"
 }
 
 update_app() {
