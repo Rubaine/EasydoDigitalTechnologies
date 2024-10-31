@@ -93,7 +93,7 @@ validate_directory() {
 
 install_app() {
     local app_file=$1
-    local temp_dir="/tmp/splunk_app_install_$(date +%s)"
+    local temp_dir="/tmp/splunk_app_install_$(date +%d-%m-%Y)"
     local extracted_dir=""
 
     log_info "Installing app..."
