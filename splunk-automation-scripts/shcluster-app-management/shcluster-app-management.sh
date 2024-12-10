@@ -10,7 +10,7 @@ NC='\033[0m'
 # Change these variables according to your environment
 SPLUNK_HOME="${SPLUNK_HOME:-/opt/splunk}"
 SPLUNK_APPS="${SPLUNK_HOME}/etc/shcluster/apps"
-SPLUNK_BACKUP_FOLDER="/home/backup"
+SPLUNK_BACKUP_FOLDER="/home/splunk/apps_backup"
 SPLUNK_BIN="${SPLUNK_HOME}/bin/splunk"
 SPLUNK_HOST="https://xxx.xx:8089"
 SPLUNK_USER="spladmin"
